@@ -1,0 +1,39 @@
+.dashboard-container {
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 72px);
+}
+
+.card {
+  transition: var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.activity-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary {
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-color) !important;
+}
+
+.btn-outline-primary {
+  border-color: var(--electric-purple);
+  color: var(--electric-purple);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--electric-purple);
+  border-color: var(--electric-purple);
+  color: white;
+}

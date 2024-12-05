@@ -1,0 +1,12 @@
+django
+pillow
+django_bootstrap5
+whitenoise[brotli]
+gunicorn
+ollama
+langchain
+langchain-community
+langchain-google-genai
+social-auth-app-django
+python-dotenv
+django-redis

@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}pricings{% endblock title %}
+{% block styles %}
+        <link rel="stylesheet" type="text/css" href="{% static 'assets/css/pricings.css' %}" />
+{% endblock styles %}
+{% block content %}
+    <!-- Pricing Hero Section -->
+    <section class="pricing-hero">
+      <div class="container text-center">
+        <h1 class="display-4 mb-4">Choose Your Plan</h1>
+        <p class="lead mb-4">
+          Select the perfect plan for your AI learning journey
+        </p>
+        <div class="pricing-switch">
+          <button class="active">Monthly</button>
+          <button>Annual</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Cards -->
+    <section class="py-5">
+      <div class="container">
+        <div class="row g-4">
+          <!-- Basic Plan -->
+          <div class="col-lg-4">
+            <div class="pricing-card card">
+              <div class="card-body p-5">
+                <h3 class="mb-4">Basic</h3>
+                <div class="price mb-4">
+                  $29 <span class="price-period">/month</span>
+                </div>
+                <p class="text-muted mb-4">
+                  Perfect for beginners starting their AI journey
+                </p>
+                <ul class="feature-list mb-5">
+                  <li>
+                    <i class="fas fa-check-circle"></i> Access to basic courses
+                  </li>
+                  <li><i class="fas fa-check-circle"></i> Community support</li>
+                  <li><i class="fas fa-check-circle"></i> Monthly webinars</li>
+                  <li><i class="fas fa-check-circle"></i> Basic AI tools</li>
+                  <li class="text-muted">
+                    <i class="fas fa-times-circle"></i> Advanced projects
+                  </li>
+                  <li class="text-muted">
+                    <i class="fas fa-times-circle"></i> 1-on-1 mentoring
+                  </li>
+                </ul>
+                <a
+                  href="{% url "pages:payment" %}"
+                  class="btn btn-outline-subscribe w-100"
+                >
+                  Get Started
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pro Plan -->
+          <div class="col-lg-4">
+            <div class="pricing-card card popular">
+              <div class="popular-badge">Popular</div>
+              <div class="card-body p-5">
+                <h3 class="mb-4">Pro</h3>
+                <div class="price mb-4">
+                  $79 <span class="price-period">/month</span>
+                </div>
+                <p class="text-muted mb-4">
+                  Most popular choice for serious learners
+                </p>
+                <ul class="feature-list mb-5">
+                  <li>
+                    <i class="fas fa-check-circle"></i> All Basic features
+                  </li>
+                  <li><i class="fas fa-check-circle"></i> Advanced courses</li>
+                  <li><i class="fas fa-check-circle"></i> Priority support</li>
+                  <li><i class="fas fa-check-circle"></i> Advanced AI tools</li>
+                  <li>
+                    <i class="fas fa-check-circle"></i> Real-world projects
+                  </li>
+                  <li class="text-muted">
+                    <i class="fas fa-times-circle"></i> 1-on-1 mentoring
+                  </li>
+                </ul>
+                <a href="{% url "pages:payment" %}" class="btn btn-subscribe w-100"
+                  >Get Started</a
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Enterprise Plan -->
+          <div class="col-lg-4">
+            <div class="pricing-card card">
+              <div class="card-body p-5">
+                <h3 class="mb-4">Enterprise</h3>
+                <div class="price mb-4">
+                  $199 <span class="price-period">/month</span>
+                </div>
+                <p class="text-muted mb-4">
+                  Complete solution for professionals
+                </p>
+                <ul class="feature-list mb-5">
+                  <li><i class="fas fa-check-circle"></i> All Pro features</li>
+                  <li>
+                    <i class="fas fa-check-circle"></i> Custom learning path
+                  </li>
+                  <li>
+                    <i class="fas fa-check-circle"></i> 24/7 premium support
+                  </li>
+                  <li>
+                    <i class="fas fa-check-circle"></i> Enterprise AI tools
+                  </li>
+                  <li><i class="fas fa-check-circle"></i> Custom projects</li>
+                  <li><i class="fas fa-check-circle"></i> 1-on-1 mentoring</li>
+                </ul>
+                <a
+                  href="{% url "pages:payment" %}"
+                  class="btn btn-outline-subscribe w-100"
+                >
+                  Get Started
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Money Back Guarantee -->
+    <section class="py-5 bg-light">
+      <div class="container">
+        <div class="guarantee-box">
+          <i class="fas fa-shield-alt guarantee-icon"></i>
+          <h3 class="mb-3">30-Day Money Back Guarantee</h3>
+          <p class="text-muted mb-0">
+            Not satisfied with our service? Get a full refund within 30 days, no
+            questions asked.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+      <div class="container">
+        <h2 class="text-center mb-5">Frequently Asked Questions</h2>
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="accordion" id="pricingFAQ">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#faq1"
+                  >
+                    Can I switch plans later?
+                  </button>
+                </h2>
+                <div
+                  id="faq1"
+                  class="accordion-collapse collapse show"
+                  data-bs-parent="#pricingFAQ"
+                >
+                  <div class="accordion-body">
+                    Yes, you can upgrade or downgrade your plan at any time.
+                    Changes will be reflected in your next billing cycle.
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#faq2"
+                  >
+                    What payment methods do you accept?
+                  </button>
+                </h2>
+                <div
+                  id="faq2"
+                  class="accordion-collapse collapse"
+                  data-bs-parent="#pricingFAQ"
+                >
+                  <div class="accordion-body">
+                    We accept all major credit cards, PayPal, and bank transfers
+                    for enterprise customers.
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#faq3"
+                  >
+                    Is there a contract or commitment?
+                  </button>
+                </h2>
+                <div
+                  id="faq3"
+                  class="accordion-collapse collapse"
+                  data-bs-parent="#pricingFAQ"
+                >
+                  <div class="accordion-body">
+                    No, all our plans are subscription-based and you can cancel
+                    anytime without penalty.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+{% endblock content %}
+{% block scripts %}
+    <script  type="text/javascript" src="{% static 'assets/js/pricings.js' %}" ></script>
+{% endblock scripts %}
+

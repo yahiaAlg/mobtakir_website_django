@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}login{% endblock title %}
+{% block styles %}
+        <link rel="stylesheet" type="text/css" href="{% static 'assets/css/login.css' %}" />
+{% endblock styles %}
+{% block content %}
+    <!-- Sign In Page -->
+    <div class="container auth-container">
+      <div class="row">
+        <div class="col-md-10 col-lg-8 mx-auto">
+          <div class="auth-card">
+            <div class="row g-0">
+              <div class="col-md-5 auth-sidebar">
+                <h2 class="mb-4">Welcome Back!</h2>
+                <p>
+                  Access your Mobtakir account to explore the future of
+                  artificial intelligence.
+                </p>
+                <div class="mt-4">
+                  <i class="fas fa-robot fa-4x"></i>
+                </div>
+              </div>
+              <div class="col-md-7 auth-form">
+                <h3 class="mb-4">Sign In</h3>
+                <form id="signinForm" action="{% url "login" %}" method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.GET.next }}">
+                  <div class="form-group mt-3">
+                      <label class="mb-2" for="username">Username</label>
+                      {{ form.username }}
+                      {% for error in form.username.errors %}
+                          <span class="error">{{ error }}</span>
+                      {% endfor %}
+                  </div>
+                  <a href="#">Forgot password?</a>
+                  <div class="form-group mt-3">
+                      <label class="mb-2" for="password">Password</label>
+                      {{ form.password }}
+                      {% for error in form.password.errors %}
+                          <span class="error">{{ error }}</span>
+                      {% endfor %}
+                  </div>
+
+                  <div class="form-check mt-3">
+                      <input type="checkbox" name="remember" id="remember">
+                      <label class="mb-2" for="remember">Remember me</label>
+                  </div>
+                  <button type="submit" class="btn btn-auth">Sign In</button>
+
+                  <div class="divider">
+                    <span>or continue with</span>
+                  </div>
+
+                  <div class="social-login">
+                    <div class="social-btn">
+                      <i class="fab fa-google"></i>
+                      <a href="{% url 'social:begin' 'google-oauth2' %}">Google</a>
+                    </div>
+                    <div class="social-btn">
+                      <i class="fab fa-github"></i>
+                      <a href="{% url 'social:begin' 'github' %}">GitHub</a>                    
+                    </div>
+                  </div>
+
+                  <div class="auth-switch">
+                    Don't have an account? <a href="{% url "register" %}">Sign Up</a>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock content %}
+{% block scripts %}
+    <script  type="text/javascript" src="{% static 'assets/js/login.js' %}" ></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add classes to form inputs for styling
+            const inputs = document.querySelectorAll('input[type="text"], input[type="password"], input[type="email"]');
+            inputs.forEach(input => {
+                input.classList.add('form-control');
+            });
+            const input = document.querySelector('input[type="checkbox"]');
+
+            input.classList.add('form-check-input');
+
+
+            // Add classes to error messages
+            const errors = document.querySelectorAll('.error');
+            errors.forEach(error => {
+                error.classList.add('text-danger');
+            });
+        });
+    </script>
+{% endblock scripts %}
+

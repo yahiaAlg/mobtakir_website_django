@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}parameters{% endblock title %}
+{% block styles %}
+        <link rel="stylesheet" type="text/css" href="{% static 'assets/css/chat_settings.css' %}" />
+{% endblock styles %}
+{% block content %}
+
+    <form class="parameters-container my-3" method="POST" action="{% url 'chatbot:chat_settings' %}">
+      <h2 class="section-header">
+        <i class="fas fa-cog"></i> Chatbot Parameters
+      </h2>
+
+      <!-- Language and Model Settings -->
+      <div class="parameter-group">
+        <h4>Language & Model Settings</h4>
+        <div class="parameter-item">
+          <div class="parameter-label">
+            Language Model
+            <span class="tooltip">
+              <i class="fas fa-info-circle info-icon"></i>
+              <span class="tooltiptext"
+                >Select the AI model that powers your chatbot</span
+              >
+            </span>
+          </div>
+          <select name="language_model" class="parameter-input">
+            <option value="wizardcoder" {% if current_model == "wizardcoder" %}selected{% endif %}>wizardcoder</option>
+            <option value="phi3" {% if current_model == "phi3" %}selected{% endif %}>phi3</option>
+            <option value="geminigemini-pro-vision" {% if current_model == "gemini-pro-vision" %}selected{% endif %}>gemini-pro-vision</option>
+            <option value="gemini" {% if current_model == "gemini" %}selected{% endif %}>gemini</option>
+            <option value="eas/dragon-mistral-v0" {% if current_model == "eas/dragon-mistral-v0" %}selected{% endif %}>eas/dragon-mistral-v0</option>
+          </select>
+        </div>
+        <div class="parameter-item">
+          <div class="parameter-label">
+            Primary Language
+            <span class="tooltip">
+              <i class="fas fa-info-circle info-icon"></i>
+              <span class="tooltiptext"
+                >Default language for the chatbot responses</span
+              >
+            </span>
+          </div>
+          <select name="primary_language" class="parameter-input">
+            <option value="ar">Arabic</option>
+            <option value="en">English</option>
+            <option value="fr">French</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Response Settings -->
+      <div class="parameter-group">
+        <h4>Response Settings</h4>
+        <div class="parameter-item">
+          <div class="parameter-label">
+            Temperature
+            <span class="tooltip">
+              <i class="fas fa-info-circle info-icon"></i>
+              <span class="tooltiptext"
+                >Controls randomness in responses (0 = deterministic, 1 =
+                creative)</span
+              >
+            </span>
+          </div>
+          <div class="slider-container">
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.1"
+              value="{{ temperature }}"
+              class="slider"
+              id="temperature"
+              name="temperature"
+            />
+            <span class="slider-value" id="temperatureValue">{{ temperature }}</span>
+          </div>
+        </div>
+        <div class="parameter-item">
+          <div class="parameter-label">
+            Maximum Response Length
+            <span class="tooltip">
+              <i class="fas fa-info-circle info-icon"></i>
+              <span class="tooltiptext"
+                >Maximum number of tokens in the response</span
+              >
+            </span>
+          </div>
+          <div class="slider-container">
+            <input
+              type="range"
+              min="50"
+              max="2000"
+              step="50"
+              value="{{max_tokens}}"
+              class="slider"
+              id="lengthSlider"
+              name="max_tokens"
+            />
+            <span class="slider-value" id="lengthValue">{{max_tokens}}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Behavior Settings -->
+      <div class="parameter-group">
+        <h4>Behavior Settings</h4>
+        <div class="parameter-item">
+          <div class="parameter-label">
+            Context Memory
+            <span class="tooltip">
+              <i class="fas fa-info-circle info-icon"></i>
+              <span class="tooltiptext"
+                >Number of previous messages to maintain in context</span
+              >
+            </span>
+          </div>
+          <div class="slider-container">
+            <input
+              type="range"
+              min="1"
+              max="20"
+              value="{{ context_memory }}"
+              class="slider"
+              id="contextSlider"
+              name="context_memory"
+            />
+            <span class="slider-value" id="contextValue">{{ context_memory }}</span>
+          </div>
+        </div>
+        <div class="parameter-item">
+          <div class="parameter-label">
+            Auto-Correct
+            <span class="tooltip">
+              <i class="fas fa-info-circle info-icon"></i>
+              <span class="tooltiptext"
+                >Automatically correct spelling and grammar in user inputs</span
+              >
+            </span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox"
+              name="auto_correct" 
+              id="auto_correct" 
+              {% if auto_correct %}checked{% endif %} 
+            />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- API Settings -->
+      <div class="parameter-group">
+        <h4>API Settings</h4>
+        <div class="parameter-item">
+          <div class="parameter-label">
+            API Key
+            <span class="tooltip">
+              <i class="fas fa-info-circle info-icon"></i>
+              <span class="tooltiptext"
+                >Your API key for accessing the language model</span
+              >
+            </span>
+          </div>
+          <input
+            type="password"
+            name="api_key" 
+            id="api_key" 
+            value="{{ api_key }}"
+            class="parameter-input"
+            placeholder="Enter API Key"
+          />
+        </div>
+        <div class="parameter-item">
+          <div class="parameter-label">
+            Endpoint URL
+            <span class="tooltip">
+              <i class="fas fa-info-circle info-icon"></i>
+              <span class="tooltiptext"
+                >API endpoint URL for the language model</span
+              >
+            </span>
+          </div>
+          <input
+            type="text"
+            class="parameter-input"
+            name="endpoint_url" 
+            id="endpoint_url" 
+            value="{{ endpoint_url }}"
+            placeholder="https://api.example.com/v1"
+          />
+        </div>
+      </div>
+
+      <div class="action-buttons">
+        <button type="reset" class="btn btn-outline">Reset to Defaults</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+{% endblock content %}
+{% block scripts %}
+    <script  type="text/javascript" src="{% static 'assets/js/chat_settings.js' %}" ></script>
+{% endblock scripts %}
+

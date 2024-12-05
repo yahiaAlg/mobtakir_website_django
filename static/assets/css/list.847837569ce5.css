@@ -1,0 +1,154 @@
+.blog-hero {
+  background: linear-gradient(
+    135deg,
+    var(--electric-purple),
+    var(--accent-color)
+  );
+  padding: 80px 0;
+  color: white;
+}
+
+.featured-post {
+  border-radius: 15px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.featured-post:hover {
+  transform: translateY(-5px);
+}
+
+.featured-image {
+  height: 400px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.featured-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: white;
+}
+
+.blog-card {
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  height: 100%;
+}
+.blog-card .card-body {
+  margin-top: 15px;
+  padding: 0 15px 25px;
+}
+
+.blog-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.blog-image {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+}
+
+.blog-tag {
+  background: var(--electric-purple);
+  color: white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  display: inline-block;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.blog-meta {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.sidebar-widget {
+  background: #f8f9fa;
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.popular-post {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.popular-post:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.popular-post img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-right: 1rem;
+}
+.popular-post div:nth-child(even) {
+  margin-left: 25px;
+}
+
+.pagination .page-link {
+  color: var(--electric-purple);
+  border: none;
+  margin: 0 5px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination .page-link:hover {
+  background: var(--electric-purple);
+  color: white;
+}
+
+.pagination .active .page-link {
+  background: var(--electric-purple);
+  color: white;
+}
+
+.newsletter-form {
+  position: relative;
+}
+
+.newsletter-input {
+  border-radius: 50px;
+  padding: 0.75rem 1.5rem;
+  padding-right: 120px;
+}
+
+.newsletter-button {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  border-radius: 50px;
+  padding: 0.5rem 1.5rem;
+  background: var(--electric-purple);
+  color: white;
+  border: none;
+}
+
+.newsletter-button:hover {
+  background: var(--accent-color);
+}
