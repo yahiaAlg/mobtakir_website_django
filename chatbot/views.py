@@ -30,7 +30,7 @@ def chat_view(request):
             response_content = ""
 
             # Check which model to use based on session settings
-            if "gemini" in session.model_name.lower():
+            if "gemini-pro" in session.model_name.lower():
                 # Initialize Google's Gemini model
                 chat = ChatGoogleGenerativeAI(
                     model="gemini-pro",
@@ -111,7 +111,7 @@ def chat_settings(request):
         # Get settings from the form
         model_name = request.POST.get("language_model")
         temperature = float(request.POST.get("temperature", 0.7))
-        max_length = int(request.POST.get("max_length", 500))
+        max_tokens = int(request.POST.get("max_tokens", 500))
         context_memory = int(request.POST.get("context_memory", 5))
         language = request.POST.get("primary_language", "English")
         auto_correct = request.POST.get("auto_correct") == "on"
@@ -120,15 +120,15 @@ def chat_settings(request):
 
         # Map frontend model names to backend model names
         model_mapping = {
-            "GPT-4": "gpt-4",
-            "GPT-3.5": "gpt-3.5-turbo",
-            "Claude": "claude-2",
-            "Gemini": "gemini-pro",
-            "Ollama": "orca-mini",
+            "wizardcoder": "wizardcoder",
+            "phi3": "phi3",
+            "gemini-pro-vision": "gemini-pro-vision",
+            "gemini-pro": "gemini-pro",
+            "eas/dragon-mistral-v0": "eas/dragon-mistral-v0",
         }
 
         # Get the actual model name from mapping
-        backend_model_name = model_mapping.get(model_name, "orca-mini")
+        backend_model_name = model_mapping.get(model_name, "phi3")
 
         try:
             # Update or create default settings for the user
@@ -147,7 +147,7 @@ def chat_settings(request):
             # Store additional settings in session
             request.session["chat_settings"] = {
                 "temperature": temperature,
-                "max_length": max_length,
+                "max_tokens": max_tokens,
                 "context_memory": context_memory,
                 "language": language,
                 "auto_correct": auto_correct,
@@ -170,20 +170,20 @@ def chat_settings(request):
 
         # Reverse map model names for frontend
         reverse_model_mapping = {
-            "gpt-4": "GPT-4",
-            "gpt-3.5-turbo": "GPT-3.5",
-            "claude-2": "Claude",
-            "gemini-pro": "Gemini",
-            "orca-mini": "Ollama",
+            "wizardcoder": "wizardcoder",
+            "phi3": "phi3",
+            "gemini-pro-vision": "gemini-pro-vision",
+            "gemini-pro": "gemini-pro",
+            "eas/dragon-mistral-v0": "eas/dragon-mistral-v0",
         }
 
         current_settings = request.session.get("chat_settings", {})
         context = {
             "current_model": reverse_model_mapping.get(
-                default_session.model_name if default_session else "orca-mini", "Ollama"
+                default_session.model_name if default_session else "gemini-pro", "phi3"
             ),
             "temperature": current_settings.get("temperature", 0.7),
-            "max_length": current_settings.get("max_length", 500),
+            "max_tokens": current_settings.get("max_tokens", 500),
             "context_memory": current_settings.get("context_memory", 5),
             "language": current_settings.get("language", "English"),
             "auto_correct": current_settings.get("auto_correct", False),
@@ -216,7 +216,7 @@ def load_chat_settings(request):
                     "settings": {
                         "model_name": default_session.model_name,
                         "temperature": current_settings.get("temperature", 0.7),
-                        "max_length": current_settings.get("max_length", 500),
+                        "max_tokens": current_settings.get("max_tokens", 500),
                         "context_memory": current_settings.get("context_memory", 5),
                         "language": current_settings.get("language", "English"),
                         "auto_correct": current_settings.get("auto_correct", False),
