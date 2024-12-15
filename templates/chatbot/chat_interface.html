@@ -6,6 +6,10 @@
   type="text/css"
   href="{% static 'assets/css/chat_interface.css' %}"
 />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css"
+/>
 {% endblock styles %} 
 {% block content %}
 <button class="mobile-menu-toggle">
@@ -46,29 +50,19 @@
       </div>
     </header>
 
-    <div class="chat-messages">
+    <div class="chat-messages" id="chat-messages">
       <div class="message bot-message">
         Hello! I'm your AI assistant. I can help you with text, images, code,
         and more.
         <div class="message-time">12:00 PM</div>
       </div>
-      <div class="message user-message">
-        Can you analyze this image for me?
-        <div class="message-time">12:01 PM</div>
-      </div>
-      <div class="typing-indicator" id="typingIndicator">
-        <div class="typing-dots">
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-        </div>
-      </div>
     </div>
 
-    <div class="chat-input-area">
-      <div class="input-container">
-        <form action="" method="post" id="chatForm">
-          <div class="text-input-area">
+    <div class="chat-input-area w-100">
+      <div class="input-container w-100">
+        <div id="chat-form" class="w-100 d-flex flex-row justify-content-center align-items-between">
+          {% csrf_token %}
+          <div class="text-input-area w-75 me-1">
             <div class="input-buttons">
               <button class="input-button" title="Upload Image">
                 <i class="fas fa-image"></i>
@@ -84,16 +78,16 @@
               </button>
             </div>
             <textarea
-              id="userInput"
+              id="user-input"
               class="text-input"
               placeholder="Type your message..."
               rows="1"
             ></textarea>
           </div>
-          <button type="submit" class="send-button">
+          <button type="submit" class="send-button w-25" id="send-button">
             <i class="fas fa-paper-plane"></i>
           </button>
-        </form>
+        </div>
       </div>
       <div class="upload-preview">
         <img class="preview-image" alt="Upload preview" />
@@ -116,8 +110,10 @@
 </div>
 {% endblock content %}
 {% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script
   type="text/javascript"
-  src="{% static 'assets/js/chat_interface.js' %}"
+  src="{% static 'assets/js/chat_interface_latest.js' %}"
 ></script>
 {% endblock scripts %}
