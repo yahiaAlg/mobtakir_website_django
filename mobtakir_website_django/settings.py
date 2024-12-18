@@ -127,15 +127,15 @@ USE_I18N = True
 USE_TZ = True
 
 # Cache settings
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": "redis://redis:6379/1",
-#         "OPTIONS": {
-#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-#         },
-#     }
-# }
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -218,8 +218,8 @@ SOCIAL_AUTH_URL_NAMESPACE = "social"
 
 
 # Session cache
-# SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-# SESSION_CACHE_ALIAS = "default"
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 
 STABLE_DIFFUSION_API_URL = os.getenv("STABLE_DIFFUSION_API_URL") or "NGROK_URL"
 STABLE_DIFFUSION_API_KEY = os.getenv("STABLE_DIFFUSION_API_KEY") or "your-secret-key-here"
