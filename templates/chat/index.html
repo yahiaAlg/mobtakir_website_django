@@ -10,6 +10,9 @@
     <div class="container mt-4">
         <div id="status" class="mb-3">
             <b>Status:</b> <span id="status-text">Ready</span>
+            {% comment %} adding a hidden field and another text field for the API url {% endcomment %}
+            <input type="hidden" id="api-url-hidden" value="{{ chat_api_url }}">
+            <input type="text" id="api-url" class="form-control" value="{{ chat_api_url }}">
         </div>
 
         <ul class="nav nav-tabs" id="myTab" role="tablist">

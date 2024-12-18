@@ -2,41 +2,98 @@
 {% load static %}
 {% block title %}Audio Gallery{% endblock %}
 {% block styles %}
-    <link rel="stylesheet" href="{% static "assets/css/audio_styles.css" %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'assets/css/audio_styles.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/audio_player.css' %}">
+
 {% endblock styles %}
+
 {% block content %}
-<main class="p-3">
-    <div class="row">
-        <div class="col-12">
-            <h2>Generated Audio Gallery</h2>
-        </div>
-    </div>
+<main class="audio-gallery">
+    <a href="{% url 'audio_gen:generate' %}" class="btn btn-secondary mb-3">
+        <i class="fas fa-arrow-left"></i> Back to Audio Generation
+    </a>
+
+    <h2 class="text-center mb-4">Generated Audio Gallery</h2>
 
     <div class="row">
         {% for audio in audios %}
-        <div class="col-md-6 mb-4">
-            <div class="card audio-card">
-                <div class="card-body">
-                    <h5 class="card-title">Prompt</h5>
-                    <p class="card-text">{{ audio.prompt }}</p>
-                    <audio controls class="audio-player">
-                        <source src="{{ audio.audio_file.url }}" type="audio/wav">
-                        Your browser does not support the audio element.
-                    </audio>
-                    <div class="generation-details mt-2">
-                        <p class="mb-1">Duration: {{ audio.audio_length }} seconds</p>
-                        <p class="mb-1">Steps: {{ audio.num_inference_steps }}</p>
-                        <p class="mb-1">Guidance Scale: {{ audio.guidance_scale }}</p>
-                        <p class="generation-time">Generated on: {{ audio.created_at }}</p>
+        <div class="col-12 mb-4">
+            <div class="audio-card">
+                <div class="prompt-text">
+                    <i class="fas fa-quote-left"></i>
+                    {{ audio.prompt }}
+                    <i class="fas fa-quote-right"></i>
+                </div>
+
+                <div class="audio-player-container">
+                    <div class="waveform" id="waveform-{{ audio.id }}">
+                        {% for i in "x"|rjust:"50" %}
+                        <div class="waveform-bar"></div>
+                        {% endfor %}
                     </div>
+
+                    <div class="audio-controls">
+                        <button class="play-btn" onclick="togglePlay('{{ audio.id }}')">
+                            <i class="fas fa-play" id="play-icon-{{ audio.id }}"></i>
+                        </button>
+                        <input type="range" 
+                            class="time-slider" 
+                            id="progress-{{ audio.id }}" 
+                            min="0" 
+                            max="100" 
+                            value="0">
+                        <span class="time-display" id="time-{{ audio.id }}">0:00</span>
+                        <audio id="audio-{{ audio.id }}" preload="metadata">
+                            <source src="{{ audio.audio_file.url }}" type="audio/wav">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                </div>
+
+                <div class="audio-details">
+                    <div class="detail-item">
+                        <span><i class="fas fa-clock"></i> Duration</span>
+                        <span>{{ audio.audio_length }} seconds</span>
+                    </div>
+                    <div class="detail-item">
+                        <span><i class="fas fa-steps"></i> Steps</span>
+                        <span>{{ audio.num_inference_steps }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span><i class="fas fa-scale-balanced"></i> Guidance Scale</span>
+                        <span>{{ audio.guidance_scale }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span><i class="fas fa-calendar"></i> Generated</span>
+                        <span>{{ audio.created_at|date:"F j, Y, g:i a" }}</span>
+                    </div>
+                </div>
+
+                <div class="audio-navigation">
+                    <button class="nav-btn" onclick="playPrevious({{ audio.id }})">
+                        <i class="fas fa-backward"></i> Previous
+                    </button>
+                    <a href="{{ audio.audio_file.url }}" download class="download-btn">
+                        <i class="fas fa-download"></i> Download
+                    </a>
+                    <button class="nav-btn" onclick="playNext({{ audio.id }})">
+                        Next <i class="fas fa-forward"></i>
+                    </button>
                 </div>
             </div>
         </div>
         {% empty %}
         <div class="col-12">
-            <p>No audio files generated yet.</p>
+            <div class="alert alert-info">No audio files generated yet.</div>
         </div>
         {% endfor %}
     </div>
 </main>
+
+{% endblock %}
+
+
+{% block scripts %}
+    <script src="{% static 'assets/js/audio_script.js' %}"></script>
 {% endblock %}

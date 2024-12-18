@@ -14,8 +14,11 @@ def generate_image(request):
         form = ImageGenerationForm(request.POST)
         if form.is_valid():
             try:
-                # API configuration
-                api_url = settings.STABLE_DIFFUSION_API_URL
+                # API configuration by either bringing it from settings or getting it from the API text Field 
+                api_url = form.cleaned_data['api_url'] or settings.STABLE_DIFFUSION_API_URL
+                print(
+                    f"API URL: {api_url}"
+                )
                 api_key = settings.STABLE_DIFFUSION_API_KEY
 
                 # Prepare the request
@@ -57,7 +60,7 @@ def generate_image(request):
                     image_instance.save()
                     
                     messages.success(request, 'Image generated successfully!')
-                    return redirect('gallery')
+                    return redirect('image_gen:gallery')
                 else:
                     messages.error(request, f"API Error: {result.get('message', 'Unknown error')}")
 

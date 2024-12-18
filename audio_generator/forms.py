@@ -2,6 +2,20 @@ from django import forms
 from .models import GeneratedAudio
 
 class AudioGenerationForm(forms.ModelForm):
+    
+    # additional text-field for API url
+    api_url = forms.CharField(
+        max_length=255,
+        required=False,  # Make the field optional
+        widget=forms.TextInput(
+            attrs={
+                'placeholder': 'Enter your API URL here',
+                'class': 'form-control',
+            }
+        )
+    )
+
+    
     class Meta:
         model = GeneratedAudio
         fields = ['prompt', 'negative_prompt', 'audio_length', 'guidance_scale', 'num_inference_steps']

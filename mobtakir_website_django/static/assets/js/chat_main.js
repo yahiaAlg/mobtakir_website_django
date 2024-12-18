@@ -1,4 +1,8 @@
-const API_BASE_URL = "https://0f86-104-199-127-245.ngrok-free.app"; // Update with your API URL
+/*
+getting the api url from an optional text field for it or from a hidden input 
+*/
+var API_BASE_URL = "";
+
 let chatHistory = [];
 
 marked.setOptions({
@@ -78,6 +82,11 @@ async function handleFileUpload(event) {
 }
 
 async function handleChat() {
+  API_BASE_URL =
+    document.getElementById("api-url")?.value ||
+    document.getElementById("api-url-hidden")?.value;
+
+  console.log("API Base URL: " + API_BASE_URL);
   const chatInput = document.getElementById("chat-input");
   const message = chatInput.value.trim();
   if (!message) return;

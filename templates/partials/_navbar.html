@@ -6,7 +6,7 @@
     </a>
     <button
       class="navbar-toggler"
-      type="button"
+      type="button" 
       data-bs-toggle="collapse"
       data-bs-target="#navbarNav"
     >
@@ -15,26 +15,58 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link active" href="{% url "pages:index" %}">Home</a>
+          <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url "pages:index" %}">Home</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle 
+              {% if request.resolver_match.url_name == 'chat' or request.resolver_match.url_name == 'generate' or request.resolver_match.url_name == 'index' or request.resolver_match.url_name == 'services' %}active{% endif %}" 
+              href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Services
+          </a>
+
+          <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+            <li>
+              <a class="dropdown-item" href="{% url 'chatbot:chat' %}">
+                <i class="fas fa-code me-2"></i>Programming Tasks
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="{% url 'image_gen:generate' %}">
+                <i class="fas fa-image me-2"></i>Image Magic
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="{% url 'audio_gen:generate' %}">
+                <i class="fas fa-volume-up me-2"></i>Audio Creation
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="{% url 'chat_upload:index' %}">
+                <i class="fas fa-text-height me-2"></i>Text Processing
+              </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a class="dropdown-item" href="{% url 'pages:index' %}#services">All Services</a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'pricing' %}active{% endif %}" href="{% url "pages:index" %}#pricing">Pricing</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url "pages:index" %}#services">Services</a>
+          <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url "pages:about" %}">About</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url "pages:index" %}#pricing">Pricing</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url "pages:about" %}">About</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url "pages:contact" %}">Contact</a>
+          <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url "pages:contact" %}">Contact</a>
         </li>
       </ul>
       <div class="nav-btns">
           <div class="auth-section">
               {% if user.is_authenticated %}
                   <div class="profile-section">
-                    <a  href="{% url "dashboard" %}">
+                    <a href="{% url "dashboard" %}">
                       <div class="profile-circle">
                           <span class="profile-initial">{{ user.username|first|upper }}</span>
                       </div>

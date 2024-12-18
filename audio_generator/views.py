@@ -14,7 +14,7 @@ def generate_audio(request):
         if form.is_valid():
             try:
                 # API configuration
-                api_url = f"{settings.AUDIO_API_URL}/generate-audio"
+                api_url = f"{form.cleaned_data['api_url'] or settings.AUDIO_API_URL }/generate-audio"
                 
                 # Prepare the request
                 data = {
@@ -46,7 +46,7 @@ def generate_audio(request):
                     audio_instance.save()
                     
                     messages.success(request, 'Audio generated successfully!')
-                    return redirect('gallery')
+                    return redirect('audio_gen:gallery')
                 else:
                     messages.error(request, f"API Error: {result.get('detail', 'Unknown error')}")
 

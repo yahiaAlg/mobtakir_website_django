@@ -150,7 +150,9 @@ MEDIA_ROOT = "media/"
 
 
 STORAGES = {
-    # ...
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
@@ -221,6 +223,7 @@ SOCIAL_AUTH_URL_NAMESPACE = "social"
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 
+CHAT_API_URL = os.getenv("CHAT_API_URL") or "NGROK_URL"
 STABLE_DIFFUSION_API_URL = os.getenv("STABLE_DIFFUSION_API_URL") or "NGROK_URL"
 STABLE_DIFFUSION_API_KEY = os.getenv("STABLE_DIFFUSION_API_KEY") or "your-secret-key-here"
 AUDIO_API_URL = os.getenv("AUDIO_API_URL") or "NGROK_URL"
