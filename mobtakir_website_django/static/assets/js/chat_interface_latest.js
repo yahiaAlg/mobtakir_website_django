@@ -17,6 +17,22 @@ marked.setOptions({
   gfm: true,
 });
 
+function copyToClipboardFallback(text) {
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.style.position = "fixed"; // Prevent scrolling
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  try {
+    document.execCommand("copy"); // Use the execCommand API
+    console.log("Fallback: Copied to clipboard");
+  } catch (err) {
+    console.error("Fallback: Unable to copy", err);
+  }
+  document.body.removeChild(textarea);
+}
+
 // Function to create and attach "Copy" buttons to code blocks
 function addCopyButtons() {
   const codeBlocks = document.querySelectorAll(".markdown-content pre");
@@ -52,20 +68,42 @@ function addCopyButtons() {
     copyButton.addEventListener("click", () => {
       const code = block.innerText;
 
-      // Copy the code to the clipboard
-      navigator.clipboard
-        .writeText(code)
-        .then(() => {
-          copyButton.textContent = "Copied!";
-
-          // Revert the button text after 2 seconds
-          setTimeout(() => {
-            copyButton.textContent = "Copy";
-          }, 2000);
-        })
-        .catch((err) => {
-          console.error("Failed to copy: ", err);
-        });
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        // Use Clipboard API if available
+        navigator.clipboard
+          .writeText(code)
+          .then(() => {
+            copyButton.textContent = "Copied!";
+            setTimeout(() => {
+              copyButton.textContent = "Copy";
+            }, 2000);
+          })
+          .catch((err) => {
+            console.error("Clipboard API failed", err);
+          });
+      } else {
+        // Fallback method for unsupported browsers
+        const textarea = document.createElement("textarea");
+        textarea.value = code;
+        textarea.style.position = "fixed"; // Prevent scrolling
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        try {
+          const successful = document.execCommand("copy");
+          if (successful) {
+            copyButton.textContent = "Copied!";
+          } else {
+            console.error("Fallback: Copy command failed");
+          }
+        } catch (err) {
+          console.error("Fallback: Unable to copy", err);
+        }
+        document.body.removeChild(textarea);
+        setTimeout(() => {
+          copyButton.textContent = "Copy";
+        }, 2000);
+      }
     });
   });
 }

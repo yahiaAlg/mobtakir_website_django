@@ -11,6 +11,10 @@ urlpatterns = (
         path("", include("pages.urls", "pages")),
         path("blog/", include("blog.urls", "blog")),
         path("chatbot/", include("chatbot.urls", "chatbot")),
+        path("chat/", include("chat.urls", "chat_upload")),
+        path("image-gen/", include("image_generator.urls", "image_gen")),
+        path("audio-gen/", include("audio_generator.urls", "audio_gen")),
+
     ]
     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Image Gallery{% endblock %}
+{% block styles %}
+    <link rel="stylesheet" href="{% static "assets/css/styles.css" %}">
+{% endblock styles %}
+{% block content %}
+<main class="p-3">
+    <div class="row">
+        <div class="col-12">
+            <h2>Generated Images Gallery</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for image in images %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{{ image.image.url }}" class="card-img-top" alt="Generated image">
+                <div class="card-body">
+                    <h5 class="card-title">Prompt</h5>
+                    <p class="card-text">{{ image.prompt }}</p>
+                    <p class="card-text"><small class="text-muted">Generated on: {{ image.created_at }}</small></p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <p>No images generated yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,22 @@
+.audio-card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.form-label {
+    font-weight: 500;
+}
+
+.alert {
+    margin-bottom: 20px;
+}
+
+.audio-player {
+    width: 100%;
+    margin: 10px 0;
+}
+
+.generation-time {
+    font-size: 0.9em;
+    color: #666;
+}
