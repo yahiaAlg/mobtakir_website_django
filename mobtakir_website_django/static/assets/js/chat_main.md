@@ -1,3 +1,4 @@
+```js
 /*
 getting the api url from an optional text field for it or from a hidden input 
 */
@@ -132,12 +133,14 @@ async function handleChat() {
     document.getElementById("api-url")?.value ||
     document.getElementById("api-url-hidden")?.value;
 
+  console.log("API Base URL: " + API_BASE_URL);
   const chatInput = document.getElementById("chat-input");
   const message = chatInput.value.trim();
   if (!message) return;
 
   try {
     updateStatus("Processing...");
+
     const contextId = document
       .getElementById("context-info")
       .innerText.includes("None")
@@ -146,24 +149,8 @@ async function handleChat() {
           .getElementById("context-info")
           .innerText.split("Context ID: ")[1];
 
-    // Add user message to chat
     chatHistory.push({ role: "user", content: message });
-    updateChatDisplay();
-    chatInput.value = "";
 
-    // Add loading indicator
-    const loadingDiv = document.createElement("div");
-    loadingDiv.className = "loader-container";
-    loadingDiv.innerHTML = `
-            <div class="typing-loader">
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-            </div>
-        `;
-    document.getElementById("chat-output").appendChild(loadingDiv);
-
-    // Set up SSE
     const response = await fetch(`${API_BASE_URL}/api/chat`, {
       method: "POST",
       headers: {
@@ -175,41 +162,14 @@ async function handleChat() {
       }),
     });
 
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let assistantMessage = { role: "assistant", content: "" };
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.detail || "Chat failed");
 
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
+    chatHistory.push({ role: "assistant", content: result.response });
+    updateChatDisplay();
 
-      const chunk = decoder.decode(value);
-      const lines = chunk.split("\n");
-
-      for (const line of lines) {
-        if (line.startsWith("data: ")) {
-          try {
-            const data = JSON.parse(line.slice(5));
-            if (data.done) {
-              loadingDiv.remove();
-              chatHistory.push(assistantMessage);
-              updateChatDisplay();
-              updateStatus("Ready");
-              break;
-            } else {
-              assistantMessage.content += data.content;
-              // Update display with partial content
-              loadingDiv.remove();
-              chatHistory.push({ ...assistantMessage });
-              updateChatDisplay();
-              chatHistory.pop(); // Remove temporary message
-            }
-          } catch (e) {
-            console.error("Error parsing SSE data:", e);
-          }
-        }
-      }
-    }
+    chatInput.value = "";
+    updateStatus("Ready");
   } catch (error) {
     document.getElementById("chat-output").innerHTML += `
             <div class="error-message">Error: ${error.message}</div>
@@ -337,3 +297,4 @@ function updateChatDisplay() {
 function updateStatus(text) {
   document.getElementById("status-text").textContent = text;
 }
+```

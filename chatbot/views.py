@@ -1,3 +1,4 @@
+from pprint import pprint
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
@@ -7,6 +8,8 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 import os
 from langchain.schema import HumanMessage, SystemMessage
 from django.contrib import messages
+from django.http import StreamingHttpResponse
+import json
 
 @login_required
 def chat_view(request):
@@ -20,73 +23,74 @@ def chat_view(request):
         else:
             session = ChatSession.objects.create(
                 user=request.user,
-                title=prompt[:50],  # Use first 50 chars of first message as title
+                title=prompt[:50],
             )
 
         # Save user message
         ChatMessage.objects.create(session=session, role="user", content=prompt)
 
-        try:
-            response_content = ""
+        def generate_response():
+            full_response = ""
+            try:
+                if "gemini-pro" in session.model_name.lower():
+                    chat = ChatGoogleGenerativeAI(
+                        model="gemini-pro",
+                        google_api_key=os.getenv("GOOGLE_API_KEY"),
+                        temperature=0.7,
+                        stream=True,  # Enable streaming
+                    )
 
-            # Check which model to use based on session settings
-            if "gemini-pro" in session.model_name.lower():
-                # Initialize Google's Gemini model
-                chat = ChatGoogleGenerativeAI(
-                    model="gemini-pro",
-                    google_api_key=os.getenv("GOOGLE_API_KEY"),
-                    temperature=0.7,
+                    messages = []
+                    history = session.messages.all().order_by("timestamp")[:5]
+                    for msg in history:
+                        if msg.role == "user":
+                            messages.append(HumanMessage(content=msg.content))
+                        elif msg.role == "assistant":
+                            messages.append(SystemMessage(content=msg.content))
+
+                    messages.append(HumanMessage(content=prompt))
+                    
+                    # Stream response from Gemini
+                    for chunk in chat.stream(messages):
+                        if chunk.content:
+                            full_response += chunk.content
+                            yield f"data: {json.dumps({'content': chunk.content, 'done': False})}\n\n"
+
+                else:  # Ollama model
+                    model_name = session.model_name if session.model_name else "phi3"
+                    
+                    # Stream response from Ollama
+                    for chunk in ollama.chat(
+                        model=model_name,
+                        messages=[{"role": "user", "content": prompt}],
+                        stream=True
+                    ):
+                        if chunk and 'message' in chunk and 'content' in chunk['message']:
+                            content = chunk['message']['content']
+                            full_response += content
+                            yield f"data: {json.dumps({'content': content, 'done': False})}\n\n"
+
+                # Save the complete response
+                ChatMessage.objects.create(
+                    session=session,
+                    role="assistant",
+                    content=full_response,
                 )
+                
+                # Send completion signal
+                yield f"data: {json.dumps({'content': '', 'done': True})}\n\n"
 
-                # Get chat history for context
-                messages = []
-                history = session.messages.all().order_by("timestamp")[
-                    :5
-                ]  # Last 5 messages
-                for msg in history:
-                    if msg.role == "user":
-                        messages.append(HumanMessage(content=msg.content))
-                    elif msg.role == "assistant":
-                        messages.append(SystemMessage(content=msg.content))
+            except Exception as e:
+                yield f"data: {json.dumps({'error': str(e), 'done': True})}\n\n"
 
-                # Add current prompt
-                messages.append(HumanMessage(content=prompt))
-
-                # Get response from Gemini
-                response = chat.invoke(messages)
-                response_content = response.content
-
-            else:  # Use Ollama model
-                model_name = session.model_name if session.model_name else "phi3"
-
-                # Get response from Ollama
-                response = ollama.chat(
-                    model=model_name, messages=[{"role": "user", "content": prompt}]
-                )
-                response_content = response["message"]["content"]
-
-            # Save assistant response
-            assistant_message = ChatMessage.objects.create(
-                session=session,
-                role="assistant",
-                content=response_content,
-            )
-
-            return JsonResponse(
-                {
-                    "content": assistant_message.content,
-                    "timestamp": assistant_message.time_formatted,
-                    "session_id": session.id,
-                }
-            )
-
-        except Exception as e:
-            return JsonResponse({"error": str(e), "status": 400}, status=400)
+        return StreamingHttpResponse(
+            generate_response(),
+            content_type='text/event-stream'
+        )
 
     # GET request - render chat interface
     sessions = ChatSession.objects.filter(user=request.user)
     return render(request, "chatbot/chat_interface.html", {"sessions": sessions})
-
 
 @login_required
 def chat_history_view(request, session_id):

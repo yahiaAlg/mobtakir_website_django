@@ -81,19 +81,63 @@ async function handleFileUpload(event) {
   event.target.value = "";
 }
 
+function addCopyButtons() {
+  document.querySelectorAll("pre code").forEach((codeBlock) => {
+    const container = codeBlock.parentElement;
+    const header = document.createElement("div");
+    header.className = "code-block-header";
+
+    const copyButton = document.createElement("button");
+    copyButton.className = "copy-button";
+    copyButton.textContent = "Copy";
+
+    header.appendChild(copyButton);
+    container.insertBefore(header, codeBlock);
+
+    copyButton.addEventListener("click", async () => {
+      try {
+        // Try using navigator.clipboard first
+        await navigator.clipboard.writeText(codeBlock.textContent);
+        copyButton.textContent = "Copied!";
+        copyButton.classList.add("copied");
+      } catch (err) {
+        // Fallback to textarea method
+        const textarea = document.createElement("textarea");
+        textarea.value = codeBlock.textContent;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand("copy");
+          copyButton.textContent = "Copied!";
+          copyButton.classList.add("copied");
+        } catch (err) {
+          copyButton.textContent = "Failed to copy";
+        }
+        document.body.removeChild(textarea);
+      }
+
+      // Reset button after 2 seconds
+      setTimeout(() => {
+        copyButton.textContent = "Copy";
+        copyButton.classList.remove("copied");
+      }, 2000);
+    });
+  });
+}
+
 async function handleChat() {
   API_BASE_URL =
     document.getElementById("api-url")?.value ||
     document.getElementById("api-url-hidden")?.value;
 
-  console.log("API Base URL: " + API_BASE_URL);
   const chatInput = document.getElementById("chat-input");
   const message = chatInput.value.trim();
   if (!message) return;
 
   try {
     updateStatus("Processing...");
-
     const contextId = document
       .getElementById("context-info")
       .innerText.includes("None")
@@ -102,8 +146,24 @@ async function handleChat() {
           .getElementById("context-info")
           .innerText.split("Context ID: ")[1];
 
+    // Add user message to chat
     chatHistory.push({ role: "user", content: message });
+    updateChatDisplay();
+    chatInput.value = "";
 
+    // Add loading indicator
+    const loadingDiv = document.createElement("div");
+    loadingDiv.className = "loader-container";
+    loadingDiv.innerHTML = `
+            <div class="typing-loader">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        `;
+    document.getElementById("chat-output").appendChild(loadingDiv);
+
+    // Set up SSE
     const response = await fetch(`${API_BASE_URL}/api/chat`, {
       method: "POST",
       headers: {
@@ -115,14 +175,41 @@ async function handleChat() {
       }),
     });
 
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.detail || "Chat failed");
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let assistantMessage = { role: "assistant", content: "" };
 
-    chatHistory.push({ role: "assistant", content: result.response });
-    updateChatDisplay();
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
 
-    chatInput.value = "";
-    updateStatus("Ready");
+      const chunk = decoder.decode(value);
+      const lines = chunk.split("\n");
+
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          try {
+            const data = JSON.parse(line.slice(5));
+            if (data.done) {
+              loadingDiv.remove();
+              chatHistory.push(assistantMessage);
+              updateChatDisplay();
+              updateStatus("Ready");
+              break;
+            } else {
+              assistantMessage.content += data.content;
+              // Update display with partial content
+              loadingDiv.remove();
+              chatHistory.push({ ...assistantMessage });
+              updateChatDisplay();
+              chatHistory.pop(); // Remove temporary message
+            }
+          } catch (e) {
+            console.error("Error parsing SSE data:", e);
+          }
+        }
+      }
+    }
   } catch (error) {
     document.getElementById("chat-output").innerHTML += `
             <div class="error-message">Error: ${error.message}</div>
@@ -162,6 +249,52 @@ async function clearChat() {
   }
 }
 
+function addCopyButtons() {
+  document.querySelectorAll("pre code").forEach((codeBlock) => {
+    const container = codeBlock.parentElement;
+    const header = document.createElement("div");
+    header.className = "code-block-header";
+
+    const copyButton = document.createElement("button");
+    copyButton.className = "copy-button";
+    copyButton.textContent = "Copy";
+
+    header.appendChild(copyButton);
+    container.insertBefore(header, codeBlock);
+
+    copyButton.addEventListener("click", async () => {
+      try {
+        // Try using navigator.clipboard first
+        await navigator.clipboard.writeText(codeBlock.textContent);
+        copyButton.textContent = "Copied!";
+        copyButton.classList.add("copied");
+      } catch (err) {
+        // Fallback to textarea method
+        const textarea = document.createElement("textarea");
+        textarea.value = codeBlock.textContent;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand("copy");
+          copyButton.textContent = "Copied!";
+          copyButton.classList.add("copied");
+        } catch (err) {
+          copyButton.textContent = "Failed to copy";
+        }
+        document.body.removeChild(textarea);
+      }
+
+      // Reset button after 2 seconds
+      setTimeout(() => {
+        copyButton.textContent = "Copy";
+        copyButton.classList.remove("copied");
+      }, 2000);
+    });
+  });
+}
+
 function updateChatDisplay() {
   const chatOutput = document.getElementById("chat-output");
   chatOutput.innerHTML = "";
@@ -195,6 +328,8 @@ function updateChatDisplay() {
       hljs.highlightBlock(block);
     });
   });
+  // After the hljs.highlightBlock line:
+  addCopyButtons();
 
   chatOutput.scrollTop = chatOutput.scrollHeight;
 }

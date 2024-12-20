@@ -1,6 +1,4 @@
 import os
-from django.db import models
-
 # Create your models here.
 # models.py
 from django.db import models
@@ -21,7 +19,7 @@ class ChatSession(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     model_name = models.CharField(
-        max_length=50, default="phi3"
+        max_length=50, default="gemini-pro"
     )  # or whatever default model you're using
     language = models.CharField(max_length=10, choices=LANGUAGE_CHOICES, default="english")
     temperature = models.DecimalField(max_digits=2, decimal_places=1)

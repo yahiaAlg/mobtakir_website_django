@@ -1,3 +1,4 @@
+```js
 const apiKey = "AIzaSyC-Aj1TmsnXKVlZJth-yL0s6tjLbPAt5D4";
 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`;
 
@@ -213,138 +214,52 @@ function removeWaitingDots() {
   let typingIndicator = document.querySelector(".typing-indicator:last-child");
   typingIndicator.remove();
 }
-// function handleMessage() {
-//   const userMessage = userInput.value.trim();
-//   if (!userMessage) return;
-
-//   createMessageBubble(userMessage, "user");
-//   console.log("created user message");
-//   addToHistory("user", userMessage);
-//   userInput.value = "";
-
-//   const data = {
-//     contents: formatHistoryForAPI(),
-//   };
-//   addWaitingDots();
-//   fetch(url, {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(data),
-//   })
-//     .then((response) => {
-//       if (!response.ok) {
-//         throw new Error(`HTTP error! status: ${response.status}`);
-//       }
-//       return response.json();
-//     })
-//     .then((result) => {
-//       const botMessage =
-//         result?.candidates?.[0]?.content?.parts?.[0]?.text ||
-//         "Sorry, I couldn't process that.";
-//       removeWaitingDots();
-//       createMessageBubble(botMessage, "bot");
-//       addToHistory("assistant", botMessage);
-//       addCopyButtons();
-//       if (!document.getElementById("clear-history")) {
-//         addClearHistoryButton();
-//       }
-//     })
-//     .catch((error) => {
-//       console.error("Error:", error);
-//       const errorMessage = "Oops! Something went wrong. Please try again.";
-//       createMessageBubble(errorMessage, "bot");
-//       addToHistory("assistant", errorMessage);
-//     });
-// }
-
-// Modified handleMessage function
-async function handleMessage() {
+function handleMessage() {
   const userMessage = userInput.value.trim();
   if (!userMessage) return;
 
-  // Display user message
   createMessageBubble(userMessage, "user");
+  console.log("created user message");
+  addToHistory("user", userMessage);
   userInput.value = "";
 
-  // Add typing indicator
+  const data = {
+    contents: formatHistoryForAPI(),
+  };
   addWaitingDots();
-
-  try {
-    const response = await fetch("/chatbot/chat/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]")
-          .value,
-      },
-      body: new URLSearchParams({
-        prompt: userMessage,
-        session_id: currentSessionId, // Make sure this is defined
-      }),
-    });
-
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let assistantMessage = { role: "assistant", content: "" };
-    removeWaitingDots();
-
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-
-      const chunk = decoder.decode(value);
-      const lines = chunk.split("\n");
-
-      for (const line of lines) {
-        if (line.startsWith("data: ")) {
-          try {
-            const data = JSON.parse(line.slice(5));
-
-            if (data.error) {
-              createMessageBubble(`Error: ${data.error}`, "bot");
-              break;
-            }
-
-            if (data.done) {
-              // Final cleanup and rendering
-              if (assistantMessage.content) {
-                conversationHistory.push(assistantMessage);
-                addCopyButtons();
-              }
-              break;
-            } else {
-              assistantMessage.content += data.content;
-              // Update the displayed message
-              const messageElement = document.querySelector(
-                ".bot-message:last-child"
-              );
-              if (messageElement) {
-                messageElement.querySelector(".bubble").innerHTML =
-                  marked.parse(assistantMessage.content);
-                // Highlight code blocks
-                messageElement.querySelectorAll("pre code").forEach((block) => {
-                  hljs.highlightElement(block);
-                });
-              } else {
-                createMessageBubble(assistantMessage.content, "bot");
-              }
-            }
-          } catch (e) {
-            console.error("Error parsing SSE data:", e);
-          }
-        }
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    }
-  } catch (error) {
-    console.error("Error:", error);
-    createMessageBubble("Oops! Something went wrong. Please try again.", "bot");
-    removeWaitingDots();
-  }
+      return response.json();
+    })
+    .then((result) => {
+      const botMessage =
+        result?.candidates?.[0]?.content?.parts?.[0]?.text ||
+        "Sorry, I couldn't process that.";
+      removeWaitingDots();
+      createMessageBubble(botMessage, "bot");
+      addToHistory("assistant", botMessage);
+      addCopyButtons();
+      if (!document.getElementById("clear-history")) {
+        addClearHistoryButton();
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      const errorMessage = "Oops! Something went wrong. Please try again.";
+      createMessageBubble(errorMessage, "bot");
+      addToHistory("assistant", errorMessage);
+    });
 }
+
 function addClearHistoryButton() {
   const clearButton = document.createElement("button");
   clearButton.id = "clear-history";

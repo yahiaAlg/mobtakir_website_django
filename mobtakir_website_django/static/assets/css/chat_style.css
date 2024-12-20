@@ -76,3 +76,175 @@
 .message-content code {
   font-family: "Courier New", Courier, monospace;
 }
+
+/* Two-column chat layout */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 90vh;
+    max-width: 800px;
+    margin: 20px auto;
+    border-radius: 10px;
+    background-color: var(--bg-dark);
+    box-shadow: var(--shadow-lg);
+}
+
+.chat-header {
+    background-color: var(--electric-purple);
+    color: var(--text-light);
+    padding: 15px;
+    text-align: center;
+    font-size: 1.5rem;
+    border-radius: 10px 10px 0 0;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: var(--dark-blue);
+    border: 1px solid var(--electric-purple);
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.chat-input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background-color: var(--text-dark);
+    color: var(--text-light);
+    border: none;
+    resize: none;
+}
+
+.chat-input:focus {
+    outline: 2px solid var(--electric-purple);
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn {
+    cursor: pointer;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: var(--transition);
+    width: 48%;
+}
+
+.btn-primary {
+    background-color: var(--electric-purple);
+    color: var(--text-light);
+}
+
+.btn-primary:hover {
+    background-color: var(--cyan);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-warning {
+    background-color: var(--secondary-color);
+    color: var(--text-light);
+}
+
+.btn-warning:hover {
+    background-color: var(--accent-color);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md);
+}
+
+.context-info {
+    text-align: center;
+    background-color: var(--electric-purple);
+    color: var(--text-light);
+    padding: 10px;
+    border-radius: 0 0 10px 10px;
+    font-size: 1rem;
+}
+
+
+/* Code copy button styles */
+.code-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2d2d2d;
+  padding: 8px;
+  border-radius: 6px 6px 0 0;
+}
+
+.copy-button {
+  background: #4a4a4a;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.2s;
+}
+
+.copy-button:hover {
+  background: #666666;
+}
+
+.copy-button.copied {
+  background: #28a745;
+}
+
+pre {
+  margin-top: 0 !important;
+  border-radius: 0 0 6px 6px !important;
+}
+
+/* Add to chat_style.css */
+.loader-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.typing-loader {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #f0f0f0;
+  border-radius: 20px;
+}
+
+.typing-dot {
+  width: 8px;
+  height: 8px;
+  background: #666;
+  border-radius: 50%;
+  animation: typing 1s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
